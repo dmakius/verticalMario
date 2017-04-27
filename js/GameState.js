@@ -24,7 +24,7 @@ VerticalMario.GameState = {
   // this.game.physics.arcade.collide(this.badGuys, this.player, this.playerCollision);
 
   this.player.update();
-  this.badGuys.update(this.player, this.badGuys);
+  this.badGuys.update();
 },
 
 createGoombas:function(){
