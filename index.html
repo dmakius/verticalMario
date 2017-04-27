@@ -1,0 +1,26 @@
+<html>
+<head>
+  <title>Vertical Mario</title>
+  <script src = "js/phaser.min.js"></script>
+  <script src = "js/bootState.js"></script>
+  <script src = "js/PreloadState.js"></script>
+  <script src = "js/MenuState.js"></script>
+  <script src = "js/GameState.js"></script>
+  <script src = "js/prefabs/Mario.js"></script>
+  <script src = "js/prefabs/InitPlatforms.js"></script>
+  <script src = "js/prefabs/Goomba.js"></script>
+</head>
+<body>
+  <script>
+
+    var VerticalMario = VerticalMario || {};
+    VerticalMario.game = new Phaser.Game(700, 500, Phaser.AUTO,'verticalMario');
+    VerticalMario.game.state.add('BootState', VerticalMario.BootState);
+    VerticalMario.game.state.add('PreloadState', VerticalMario.PreloadState);
+    VerticalMario.game.state.add('MenuState', VerticalMario.MenuState);
+    VerticalMario.game.state.add('GameState', VerticalMario.GameState);
+
+    VerticalMario.game.state.start('BootState');
+  </script>
+</body>
+</html>
