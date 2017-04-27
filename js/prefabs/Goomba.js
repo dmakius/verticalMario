@@ -16,3 +16,8 @@ VerticalMario.Goomba = function(game, x, y){
 
 VerticalMario.Goomba.prototype = Object.create(Phaser.Sprite.prototype);
 VerticalMario.Goomba.prototype.constructor = VerticalMario.Goomba;
+
+VerticalMario.Goomba.prototype.update = function(mario, goomba){
+  console.log("Goomba Update");
+  console.log(mario);
+}
