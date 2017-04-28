@@ -11,8 +11,11 @@ VerticalMario.Goomba = function(game, x, y){
   this.animations.add('walking', [0,1], 10, true);
   this.animations.add('dead', [2], 10, true);
   this.animations.play('walking');
-
 }
 
 VerticalMario.Goomba.prototype = Object.create(Phaser.Sprite.prototype);
 VerticalMario.Goomba.prototype.constructor = VerticalMario.Goomba;
+
+VerticalMario.Goomba.prototype.update = function(mario, goomba){
+
+}

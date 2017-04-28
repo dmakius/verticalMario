@@ -1,6 +1,7 @@
 var VerticalMario = VerticalMario || {};
 
 VerticalMario.GameState = {
+
   preload: function(){
 
   },
@@ -29,12 +30,12 @@ VerticalMario.GameState = {
   },
 
   update: function(){
-  this.game.physics.arcade.collide(this.player, this.initPlatforms, this.jumpReset);
+  this.game.physics.arcade.collide(this.player, this.initPlatforms);
   this.game.physics.arcade.collide(this.badGuys, this.initPlatforms);
-  this.game.physics.arcade.collide(this.badGuys, this.player, this.playerCollision);
+  this.game.physics.arcade.collide(this.badGuys, this.player, this.playerCollision, null, this);
 
   if(this.cursors.up.isDown && this.player.body.wasTouching.down){
-    this.player.body.velocity.y = -100;
+    this.player.body.velocity.y = -150;
   }else if(this.cursors.left.isDown){
     this.player.body.velocity.x = -100;
     this.player.facingRight = false;
@@ -70,19 +71,16 @@ createGoombas:function(){
 
 playerCollision: function(player, badGuy){
   if(badGuy.body.touching.up){
-    console.log(badGuy);
     badGuy.animations.play('dead');
-
-    // to do
-    // add timer to kill badguy
-    //
-
+    this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.killSprite, this, badGuy);
     player.body.velocity.y = -50;
+  }else{
+    //TO DO: KILL MARIO(PLAYER);
   }
 },
 
-badGuyKilled: function(){
-  console.log("badGuy DEAD");
+killSprite: function(badGuy){
+   badGuy.kill();
 },
 
 resetJump: function(){
@@ -92,11 +90,15 @@ resetJump: function(){
 
 createInitialPlatform: function(){
   this.initPlatforms = this.game.add.group();
-
-  for(var x = 0; x < 30; x++){
-    var platform = new VerticalMario.InitPlatforms(this, 32*x,400);
-    this.initPlatforms.add(platform);
+  for(var y = 0; y < 5; y ++){
+    var gap = Math.floor(Math.random()*20);
+    for(var x = 0; x < 24; x++){
+      if(x <= gap || x >= gap + 4){
+        var platform = new VerticalMario.InitPlatforms(this, 32*x,125*y);
+      }
+      this.initPlatforms.add(platform);
+    }
   }
-      // this.game.physics.arcade.enable(this.initPlatforms);
+
   }
 }

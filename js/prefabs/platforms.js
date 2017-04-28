@@ -1,6 +1,6 @@
 var VerticalMario = VerticalMario || {}
 
-VerticalMario.InitPlatforms  =  function(game, x , y){
+VerticalMario.Platforms  =  function(game, x , y){
   Phaser.Sprite.call(this, game, x, y, 'brick');
   this.anchor.setTo(0.5);
   this.checkWorldBounds = true;
@@ -11,5 +11,5 @@ VerticalMario.InitPlatforms  =  function(game, x , y){
 
 }
 
-VerticalMario.InitPlatforms.prototype = Object.create(Phaser.Sprite.prototype);
-VerticalMario.InitPlatforms.prototype.constructor = VerticalMario.InitPlatforms;
+VerticalMario.Platforms.prototype = Object.create(Phaser.Sprite.prototype);
+VerticalMario.Platforms.prototype.constructor = VerticalMario.InitPlatforms;
