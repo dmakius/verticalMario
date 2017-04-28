@@ -8,7 +8,6 @@ VerticalMario.Platforms  =  function(game, x , y){
   this.game.physics.arcade.enable(this);
   this.body.immovable = true;
   this.body.velocity.y = 20;
-
 }
 
 VerticalMario.Platforms.prototype = Object.create(Phaser.Sprite.prototype);

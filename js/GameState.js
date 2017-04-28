@@ -27,6 +27,7 @@ VerticalMario.GameState = {
 
     this.createInitialPlatform();
     this.createGoombas();
+    this.timer = this.game.time.events.loop(6200, this.addRow, this);
   },
 
   update: function(){
@@ -60,6 +61,17 @@ VerticalMario.GameState = {
         this.player.animations.play("jumpLeft");
       }
   }
+  this.initPlatforms.update();
+},
+
+addRow: function(){
+  var gap = Math.floor(Math.random()*20);
+  for(var x = 0; x < 24; x++){
+    if(x <= gap || x >= gap + 4){
+      var platform = new VerticalMario.InitPlatforms(this, 32*x,-25);
+    }
+    this.initPlatforms.add(platform);
+  }
 },
 
 createGoombas:function(){
@@ -81,11 +93,6 @@ playerCollision: function(player, badGuy){
 
 killSprite: function(badGuy){
    badGuy.kill();
-},
-
-resetJump: function(){
-  this.player.jump = false;
-  this.player.gravity = 0;
 },
 
 createInitialPlatform: function(){
