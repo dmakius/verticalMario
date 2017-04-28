@@ -1,11 +1,6 @@
 var VerticalMario = VerticalMario || {};
 
 VerticalMario.GameState = {
-
-  preload: function(){
-
-  },
-
   create: function(){
     this.cursors = this.game.input.keyboard.createCursorKeys();
     this.background = this.game.add.sprite(0,0, 'background');
@@ -35,7 +30,7 @@ VerticalMario.GameState = {
   if(!this.player.dead){
         this.game.physics.arcade.collide(this.player, this.initPlatforms, this.brickCollision, null, this);
   }
-  this.game.physics.arcade.collide(this.badGuys, this.initPlatforms);
+  this.game.physics.arcade.collide(this.badGuys, this.initPlatforms, this.realignBadGuy, null, this);
   this.game.physics.arcade.collide(this.badGuys, this.player, this.playerCollision, null, this);
 
  if(this.player.dead == false){
@@ -84,25 +79,30 @@ addRow: function(){
   }
 },
 
+realignBadGuy: function(badGuy, platform){
+  console.log(badGuy.body.velocity.x);
+  if(badGuy.body.touching.left || badGuy.body.touching.right){
+    badGuy.body.velocity.x = 100;
+  }
+},
 createGoombas:function(){
   this.badGuys = this.game.add.group();
   this.badGuys.enableBody = true;
-  var goomba = new VerticalMario.Goomba(this.game, 100, 350);
-  this.badGuys.add(goomba);
+    var goomba = new VerticalMario.Goomba(this.game, 100, 50);
+    this.badGuys.add(goomba);
 },
 
 playerCollision: function(player, badGuy){
   if(badGuy.body.touching.up){
     badGuy.animations.play('dead');
+    badGuy.body.velocity.x = 0;
     this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.killSprite, this, badGuy);
     player.body.velocity.y = -50;
   }else{
-    console.log(player);
     this.player.animations.play('dead');
+    this.player.body.velocity.x = 0;
+    this.player.body.velocity.y = -50;
     this.player.dead = true;
-    console.log('player dead');
-    //player.body.velocity.y = -50;
-
   }
 },
 
@@ -110,17 +110,18 @@ brickCollision: function(player, brick){
   if(brick.body.touching.down){
     console.log("brick hit");
     var brickBounce = this.game.add.tween(brick.body);
-    brickBounce.to({x:brick.body.x, y:brick.body.y - 10}, 200, Phaser.Easing.Linear.None);
+    brickBounce.to({x:brick.body.x, y:brick.body.y - 10}, 100, Phaser.Easing.Linear.None);
     brickBounce.onComplete.addOnce(function(){
-      console.log("Brick needs to bounce back");
+      console.log('bouncback');
+      brickBounce.to({x:brick.body.x, y:brick.body.y + 16}, 100, Phaser.Easing.Linear.None);
+      brickBounce.start();
     });
     brickBounce.start();
-    //brickRebounce.start();
   }
 },
 
 killSprite: function(badGuy){
-   badGuy.kill();
+  badGuy.relocate();
 },
 
 createInitialPlatform: function(){
