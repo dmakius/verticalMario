@@ -23,6 +23,13 @@ VerticalMario.GameState = {
     this.player.animations.add('jumpRight', [4], 1, true);
     this.player.animations.play('standRight');
 
+    this.coinSound = this.game.add.audio('getCoin');
+    this.jumpSound = this.game.add.audio('jump');
+    this.deadSound = this.game.add.audio('dead');
+    this.hitHeadSound = this.game.add.audio('hitHead');
+    this.squishEnemySound = this.game.add.audio('squishEnemy');
+
+
     this.createInitialPlatform();
     this.createGoombas();
     this.game.scoreBoard = this.game.add.bitmapText(10, 10, "marioFont", "SCORE: 0" , 16);
@@ -41,6 +48,7 @@ VerticalMario.GameState = {
 
  if(this.player.dead == false){
    if(this.cursors.up.isDown && this.player.body.wasTouching.down){
+     this.jumpSound.play();
      this.player.body.velocity.y = -150;
    }else if(this.cursors.left.isDown){
      this.player.body.velocity.x = -100;
@@ -119,12 +127,14 @@ fixCoins: function(coin, platform){
 
 collectCoin: function(sprite, coin, player){
   coin.relocate();
+  this.coinSound.play();
   this.player.score += 200;
   this.game.scoreBoard.setText("SCORE: " + this.player.score);
 },
 
 playerCollision: function(player, badGuy){
   if(badGuy.body.touching.up){
+    this.squishEnemySound.play();
     badGuy.animations.play('dead');
     badGuy.body.velocity.x = 0;
     this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.killSprite, this, badGuy);
@@ -132,6 +142,7 @@ playerCollision: function(player, badGuy){
     this.player.score += 100;
     this.game.scoreBoard.setText("SCORE: " + this.player.score);
   }else{
+    this.deadSound.play();
     this.player.animations.play('dead');
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = -50;
@@ -141,6 +152,7 @@ playerCollision: function(player, badGuy){
 
 brickCollision: function(player, brick){
   if(brick.body.touching.down){
+    this.hitHeadSound.play();
     var brickBounce = this.game.add.tween(brick.body);
     brickBounce.to({x:brick.body.x, y:brick.body.y - 10}, 100, Phaser.Easing.Linear.None);
     brickBounce.onComplete.addOnce(function(){
