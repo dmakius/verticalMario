@@ -4,6 +4,7 @@ VerticalMario.PreloadState = {
   preload: function(){
     console.log("preloadlad state: Preload");
     this.game.load.spritesheet('mario', 'assets/mario_small.png', 32, 32);
+    this.game.load.image('coin', 'assets/coin.png');
     this.game.load.spritesheet('goomba', 'assets/goomba.png', 32, 32);
     this.game.load.image('brick', 'assets/block.png', 32, 32);
     this.game.load.image('main_title', 'assets/main_title.gif');

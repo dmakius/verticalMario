@@ -7,10 +7,12 @@ VerticalMario.GameState = {
 
     this.player = this.game.add.sprite(300,300,'mario');
     this.player.enableBody = true;
+
     this.game.physics.arcade.enable(this.player);
     this.player.body.gravity.y = 100;
     this.player.facingRight = true;
     this.player.dead = false;
+    this.player.score = 0;
 
     this.player.animations.add('standRight', [0], 1, true);
     this.player.animations.add('standLeft', [14], 1, true);
@@ -23,15 +25,19 @@ VerticalMario.GameState = {
 
     this.createInitialPlatform();
     this.createGoombas();
+    this.game.scoreBoard = this.game.add.bitmapText(10, 10, "marioFont", "SCORE: 0" , 16);
+    this.createCoins();
     this.timer = this.game.time.events.loop(6200, this.addRow, this);
   },
 
   update: function(){
   if(!this.player.dead){
         this.game.physics.arcade.collide(this.player, this.initPlatforms, this.brickCollision, null, this);
+        this.game.physics.arcade.collide(this.badGuys, this.player, this.playerCollision, null, this);
+        this.game.physics.arcade.overlap(this.coins, this.player, this.collectCoin, null, this);
   }
   this.game.physics.arcade.collide(this.badGuys, this.initPlatforms, this.realignBadGuy, null, this);
-  this.game.physics.arcade.collide(this.badGuys, this.player, this.playerCollision, null, this);
+  this.game.physics.arcade.collide(this.coins, this.initPlatforms, this.fixCoins, null, this);
 
  if(this.player.dead == false){
    if(this.cursors.up.isDown && this.player.body.wasTouching.down){
@@ -67,6 +73,7 @@ VerticalMario.GameState = {
    this.game.state.start('MenuState');
  }
   this.initPlatforms.update();
+  this.coins.update();
 },
 
 addRow: function(){
@@ -85,11 +92,33 @@ realignBadGuy: function(badGuy, platform){
     badGuy.body.velocity.x = 100;
   }
 },
+
 createGoombas:function(){
   this.badGuys = this.game.add.group();
   this.badGuys.enableBody = true;
-    var goomba = new VerticalMario.Goomba(this.game, 100, 50);
-    this.badGuys.add(goomba);
+  var goomba = new VerticalMario.Goomba(this.game, 100, 50);
+  this.badGuys.add(goomba);
+},
+
+createCoins: function(){
+  this.coins = this.game.add.group();
+  this.coins.enableBody = true;
+  for(var x = 0; x<3; x++){
+    var ranX = Math.floor(Math.random() * 650);
+    var ranY = Math.floor(Math.random()* 350);
+    var coin = new VerticalMario.Coin(this.game, ranX, ranY);
+    this.coins.add(coin);
+  }
+},
+
+fixCoins: function(coin, platform){
+  coin.y += 20;
+},
+
+collectCoin: function(sprite, coin, player){
+  coin.relocate();
+  this.player.score += 200;
+  this.game.scoreBoard.setText("SCORE: " + this.player.score);
 },
 
 playerCollision: function(player, badGuy){
@@ -98,6 +127,8 @@ playerCollision: function(player, badGuy){
     badGuy.body.velocity.x = 0;
     this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.killSprite, this, badGuy);
     player.body.velocity.y = -50;
+    this.player.score += 100;
+    this.game.scoreBoard.setText("SCORE: " + this.player.score);
   }else{
     this.player.animations.play('dead');
     this.player.body.velocity.x = 0;
@@ -108,12 +139,10 @@ playerCollision: function(player, badGuy){
 
 brickCollision: function(player, brick){
   if(brick.body.touching.down){
-    console.log("brick hit");
     var brickBounce = this.game.add.tween(brick.body);
     brickBounce.to({x:brick.body.x, y:brick.body.y - 10}, 100, Phaser.Easing.Linear.None);
     brickBounce.onComplete.addOnce(function(){
-      console.log('bouncback');
-      brickBounce.to({x:brick.body.x, y:brick.body.y + 16}, 100, Phaser.Easing.Linear.None);
+      brickBounce.to({x:brick.body.x, y:brick.body.y + 17}, 100, Phaser.Easing.Linear.None);
       brickBounce.start();
     });
     brickBounce.start();
@@ -135,6 +164,5 @@ createInitialPlatform: function(){
       this.initPlatforms.add(platform);
     }
   }
-
   }
 }
