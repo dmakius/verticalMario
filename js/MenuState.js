@@ -11,6 +11,9 @@ VerticalMario.MenuState = {
     this.game.title = this.game.add.bitmapText(this.game.world.centerX, 375, "gameFont", "press spacebar to start" , 36);
     this.game.title.anchor.setTo(0.5);
 
+    this.game.topTitle = this.game.add.bitmapText(this.game.world.centerX -  150, 130, "gameFont", "Vertical" , 48);
+    this.game.topTitle.anchor.setTo(0.5);
+    this.game.topTitle.angle = -15;
     this.start = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   },
   update:function(){
