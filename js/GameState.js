@@ -97,7 +97,9 @@ createGoombas:function(){
   this.badGuys = this.game.add.group();
   this.badGuys.enableBody = true;
   var goomba = new VerticalMario.Goomba(this.game, 100, 50);
+  var goomba2 = new VerticalMario.Goomba(this.game, 400, 200);
   this.badGuys.add(goomba);
+  this.badGuys.add(goomba2);
 },
 
 createCoins: function(){
