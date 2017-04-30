@@ -2,84 +2,42 @@ var VerticalMario = VerticalMario || {};
 
 VerticalMario.GameState = {
   create: function(){
-    this.cursors = this.game.input.keyboard.createCursorKeys();
     this.background = this.game.add.sprite(0,0, 'background');
 
-    this.player = this.game.add.sprite(300,300,'mario');
-    this.player.enableBody = true;
-
-    this.game.physics.arcade.enable(this.player);
-    this.player.body.gravity.y = 100;
-    this.player.facingRight = true;
-    this.player.dead = false;
-    this.player.score = 0;
-
-    this.player.animations.add('standRight', [0], 1, true);
-    this.player.animations.add('standLeft', [14], 1, true);
-    this.player.animations.add('walkingLeft', [15,16,17], 10, true);
-    this.player.animations.add('walkingRight', [1,2,3], 10, true);
-    this.player.animations.add('jumpLeft', [18], 1, true);
-    this.player.animations.add('dead', [12] , 1, true);
-    this.player.animations.add('jumpRight', [4], 1, true);
-    this.player.animations.play('standRight');
+    this.player = this.game.add.group();
+    var mario = new VerticalMario.Mario(this.game, 100, 250);
+    this.player.add(mario);
 
     this.coinSound = this.game.add.audio('getCoin');
-    this.jumpSound = this.game.add.audio('jump');
     this.deadSound = this.game.add.audio('dead');
     this.hitHeadSound = this.game.add.audio('hitHead');
     this.squishEnemySound = this.game.add.audio('squishEnemy');
 
-
     this.createInitialPlatform();
     this.createGoombas();
-    this.game.scoreBoard = this.game.add.bitmapText(10, 10, "marioFont", "SCORE: 0" , 16);
     this.createCoins();
-    this.timer = this.game.time.events.loop(6200, this.addRow, this);
+
+    //this.spinyTimer = this.game.time.events.loop(1000, this.addSpiny, this);
+    this.goombaTimer = this.game.time.events.loop(5000, this.addGoomba, this);
+    this.rowTimer = this.game.time.events.loop(6200, this.addRow, this);
+    this.game.scoreBoard = this.game.add.bitmapText(10, 10, "marioFont", "SCORE: 0" , 16);
   },
 
   update: function(){
-  if(!this.player.dead){
+   if(this.player.alive){
         this.game.physics.arcade.collide(this.player, this.initPlatforms, this.brickCollision, null, this);
         this.game.physics.arcade.collide(this.badGuys, this.player, this.playerCollision, null, this);
         this.game.physics.arcade.overlap(this.coins, this.player, this.collectCoin, null, this);
   }
+
   this.game.physics.arcade.collide(this.badGuys, this.initPlatforms, this.realignBadGuy, null, this);
   this.game.physics.arcade.collide(this.coins, this.initPlatforms, this.fixCoins, null, this);
 
- if(this.player.dead == false){
-   if(this.cursors.up.isDown && this.player.body.wasTouching.down){
-     this.jumpSound.play();
-     this.player.body.velocity.y = -150;
-   }else if(this.cursors.left.isDown){
-     this.player.body.velocity.x = -100;
-     this.player.facingRight = false;
-     this.player.animations.play('walkingLeft');
-   }else if(this.cursors.right.isDown){
-     this.player.body.velocity.x = 100;
-     this.player.facingRight = true;
-     this.player.animations.play('walkingRight');
-   }else if(this.player.facingRight){
-     this.player.body.velocity.x = 0;
-     this.player.animations.play('standRight');
-   }else{
-     this.player.body.velocity.x = 0;
-     this.player.animations.play('standLeft');
-   }
+  if(!this.player.alive){
 
-   //adding jumping frames
-   if(this.player.body.touching.down == false){
-       if(this.player.facingRight == true){
-         this.player.animations.play("jumpRight");
-       }else{
-         this.player.animations.play("jumpLeft");
-       }
-   }
- }
+    this.restartTimer = this.game.time.events.loop(3000, this.restart, this);
+  }
 
-//gameover
- if(this.player.body.y >= 600){
-   this.game.state.start('MenuState');
- }
   this.initPlatforms.update();
   this.coins.update();
 },
@@ -95,9 +53,10 @@ addRow: function(){
 },
 
 realignBadGuy: function(badGuy, platform){
-  if(badGuy.body.touching.left || badGuy.body.touching.right){
-    badGuy.body.velocity.x = 100;
-  }
+  // console.log("realignBadGuy");
+  // badGuy.y -= 40;
+  // if(badGuy == VerticalMario.Spiny)
+  // {console.log(badGuy);}
 },
 
 createGoombas:function(){
@@ -107,6 +66,22 @@ createGoombas:function(){
   var goomba2 = new VerticalMario.Goomba(this.game, 400, 200);
   this.badGuys.add(goomba);
   this.badGuys.add(goomba2);
+},
+
+addGoomba: function(){
+  var r = Math.random();
+  if(r >= 0.5){
+    ranX = 100;
+  }else{
+    ranX = 500;
+  }
+  var goomba = new VerticalMario.Goomba(this.game, ranX, -50);
+  this.badGuys.add(goomba);
+},
+
+addSpiny: function(){
+  var spiny = new VerticalMario.Spiny(this.game, 100, 20);
+  this.badGuys.add(spiny);
 },
 
 createCoins: function(){
@@ -124,30 +99,31 @@ fixCoins: function(coin, platform){
   coin.y += 20;
 },
 
-collectCoin: function(sprite, coin, player){
+collectCoin: function(coin, player){
   coin.relocate();
   this.coinSound.play();
-  this.player.score += 200;
-  this.game.scoreBoard.setText("SCORE: " + this.player.score);
+  player.score += 200;
+  this.game.scoreBoard.setText("SCORE: " + player.score);
 },
 
-playerCollision: function(player, badGuy){
+playerCollision: function(badGuy, player){
   if(badGuy.body.touching.up){
     this.squishEnemySound.play();
     badGuy.animations.play('dead');
     badGuy.body.velocity.x = 0;
-    this.pointsUp = this.game.add.image(badGuy.body.x, badGuy.body.y - 10,'200pts');
+    this.pointsUp = this.game.add.image(badGuy.body.x, badGuy.body.y - 10, '200pts');
     this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.killPointSprite, this, this.pointsUp);
     this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.killSprite, this, badGuy);
     player.body.velocity.y = -50;
-    this.player.score += 200;
-    this.game.scoreBoard.setText("SCORE: " + this.player.score);
+    player.score += 200;
+    this.game.scoreBoard.setText("SCORE: " + player.score);
   }else{
-    this.deadSound.play();
-    this.player.animations.play('dead');
-    this.player.body.velocity.x = 0;
-    this.player.body.velocity.y = -50;
-    this.player.dead = true;
+    this.deadSound.play()
+    player.dead = true;
+    player.animations.play('dead');
+    player.body.velocity.x = 0;
+    player.body.velocity.y = -50;
+    this.player.alive = false;
   }
 },
 
@@ -156,6 +132,7 @@ brickCollision: function(player, brick){
     this.hitHeadSound.play();
     var brickBounce = this.game.add.tween(brick.body);
     brickBounce.to({x:brick.body.x, y:brick.body.y - 10}, 100, Phaser.Easing.Linear.None);
+    this.game.physics.arcade.collide(this.badGuys, brick, this.flipBadGuy, null,);
     brickBounce.onComplete.addOnce(function(){
       brickBounce.to({x:brick.body.x, y:brick.body.y + 17}, 100, Phaser.Easing.Linear.None);
       brickBounce.start();
@@ -164,12 +141,25 @@ brickCollision: function(player, brick){
   }
 },
 
+flipBadGuy: function(brick, spiny){
+  console.log(spiny);
+  spiny.body.gravity= 200;
+  spiny.body.enable = false;
+  console.log(spiny);
+},
+
 killPointSprite: function(pointSprite){
   pointSprite.kill();
 },
 
 killSprite: function(badGuy){
-  badGuy.relocate();
+  // console.log('');
+  console.log(badGuy);
+  badGuy.kill();
+},
+
+restart: function(){
+  this.game.state.start('MenuState');
 },
 
 createInitialPlatform: function(){

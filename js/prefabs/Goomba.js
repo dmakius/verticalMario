@@ -6,6 +6,7 @@ VerticalMario.Goomba = function(game, x, y){
   this.body.velocity.x = 50;
   this.body.gravity.y  = 40;
   this.anchor.setTo(0.5);
+  this.dead = false;
   this.animations.add();
   this.animations.add('walking', [0,1], 10, true);
   this.animations.add('dead', [2], 10, true);
@@ -20,23 +21,10 @@ VerticalMario.Goomba.prototype.update = function(){
     this.body.velocity.x *= -1;
   }
   if(this.body.y >= this.game.world.height + 50){
-    this.relocate();
+    this.kill();
   }
 
-  if(this.body.velocity.x == 0){
+  if(this.body.velocity.x == 0 && !this.dead){
     this.body.velocity.x = 50;
   }
-}
-
-VerticalMario.Goomba.prototype.relocate = function(){
-  var ran = Math.random();
-  this.animations.play('walking');
-  this.y = -25;
-   if(ran <= 0.5){
-     this.x = 100;
-    this.body.velocity.x = 50;
-   }else{
-     this.x = 600;
-     this.body.velocity.x = -50;
-   }
 }

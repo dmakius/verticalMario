@@ -10,11 +10,14 @@ VerticalMario.PreloadState = {
     this.load.setPreloadSprite(this.preloadBar);
 
     this.game.load.spritesheet('mario', 'assets/mario_small.png', 32, 32);
-    this.game.load.image('coin', 'assets/coin.png');
     this.game.load.spritesheet('goomba', 'assets/goomba.png', 32, 32);
+    this.game.load.spritesheet('spiny', 'assets/spiny.gif', 32,32);
+    this.game.load.image('coin', 'assets/coin.png');
+
     this.game.load.image('brick', 'assets/block.png', 32, 32);
     this.game.load.image('main_title', 'assets/main_title.gif');
     this.game.load.image('200pts','assets/200.gif');
+
 
     //SOUNDS
     this.game.load.audio('getCoin', 'https://s3-us-west-2.amazonaws.com/makoverwebsite/platformerGame/assets/sounds/smb_coin.wav');
