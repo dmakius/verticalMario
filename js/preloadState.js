@@ -14,12 +14,12 @@ VerticalMario.PreloadState = {
     this.game.load.spritesheet('goomba', 'assets/goomba.png', 32, 32);
     this.game.load.image('brick', 'assets/block.png', 32, 32);
     this.game.load.image('main_title', 'assets/main_title.gif');
-
+    this.game.load.image('200pts','assets/200.gif');
 
     //SOUNDS
     this.game.load.audio('getCoin', 'https://s3-us-west-2.amazonaws.com/makoverwebsite/platformerGame/assets/sounds/smb_coin.wav');
   	this.game.load.audio('jump', 'https://s3-us-west-2.amazonaws.com/makoverwebsite/platformerGame/assets/sounds/smb_jump-small.wav');
-  	this.game.load.audio('dead', 'https://s3-us-west-2.amazonaws.com/makoverwebsite/platformerGame/assets/sounds/dead.mp3');
+  	this.game.load.audio('dead', 'assets/sounds/music_die.mp3');
     this.game.load.audio('hitHead' , '/assets/sounds/hit_head.mp3');
     this.game.load.audio('squishEnemy', '/assets/sounds/squish_enemy.mp3');
   },

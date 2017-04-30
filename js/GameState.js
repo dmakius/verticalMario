@@ -95,7 +95,6 @@ addRow: function(){
 },
 
 realignBadGuy: function(badGuy, platform){
-  console.log(badGuy.body.velocity.x);
   if(badGuy.body.touching.left || badGuy.body.touching.right){
     badGuy.body.velocity.x = 100;
   }
@@ -137,9 +136,11 @@ playerCollision: function(player, badGuy){
     this.squishEnemySound.play();
     badGuy.animations.play('dead');
     badGuy.body.velocity.x = 0;
+    this.pointsUp = this.game.add.image(badGuy.body.x, badGuy.body.y - 10,'200pts');
+    this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.killPointSprite, this, this.pointsUp);
     this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.killSprite, this, badGuy);
     player.body.velocity.y = -50;
-    this.player.score += 100;
+    this.player.score += 200;
     this.game.scoreBoard.setText("SCORE: " + this.player.score);
   }else{
     this.deadSound.play();
@@ -161,6 +162,10 @@ brickCollision: function(player, brick){
     });
     brickBounce.start();
   }
+},
+
+killPointSprite: function(pointSprite){
+  pointSprite.kill();
 },
 
 killSprite: function(badGuy){
