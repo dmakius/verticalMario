@@ -15,4 +15,4 @@ The arrow keys will move mario around. The up key will cause mario to jump. Goom
 ![Alt text](https://s3-us-west-2.amazonaws.com/makoverwebsite/BlogImages/verticalMario.png)
 
 ## DISCLAIMER
-All SPRITES AND IMAGES ARE THE PROPRTY OF NINTENDO CO., LTD
+All IMAGE AND AUDIO FILES ARE THE PROPRTY OF NINTENDO CO., LTD
